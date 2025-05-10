@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fabric@4.6.0/dist/fabric.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/libs/fflate.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        background-color: white;
+      }
+      .view {
+        position: relative;
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+      }
+      .twod,
+      .threed {
+        height: 100%;
+      }
+      .twod {
+        position: absolute;
+        margin-left: 40px;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+      .twod > div {
+        border-style: solid;
+        border-width: 2px;
+        background-position: center;
+        background-image: url("public/dot-grid-paper-graph-paper-cm-white-background-vector-illustration-dot-grid-paper-graph-paper-cm-white.png");
+        background-color: #fefefe;
+        padding: 64px;
+        border-color: #e1e1e1;
+      }
+      #allSvg {
+        display: flex;
+        width: auto;
+        height: 150px;
+        gap: 10px;
+      }
+      .svg-container {
+        padding: 20px;
+        display: flex;
+        border-radius: 10px;
+        justify-content: center;
+        align-items: center;
+        border: 2px solid white;
+        flex: 0 0 auto;
+        width: 100px;
+        height: 100px;
+        cursor: pointer;
+      }
+      .svg-container > img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .svgsDiv {
+        position: absolute;
+        bottom: 20px;
+        left: 0;
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .threed {
+        width: 100%;
+      }
+      .colors {
+        background-color: #ffffff;
+        border-style: solid;
+        border-width: 2px;
+        border-radius: 20px;
+        border-color: #e1e3e8;
+        box-shadow: 0px 8px 8px #0000003c;
+        width: 296px;
+
+        padding: 20px;
+        height: 60%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 50px;
+      }
+      .colorsContainer {
+        position: absolute;
+        top: 0;
+        right: 100px;
+
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .box {
+        border-radius: 10%;
+        border: none;
+      }
+      .text {
+        color: black;
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+        font-weight: 500;
+        font-size: 30px;
+      }
+      .fileUpload {
+        width: fit-content;
+      }
+      header {
+        width: calc(100vw - 120px);
+        height: 100px;
+        background-color: transparent;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 30px;
+        padding-left: 60px;
+        padding-right: 60px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 10;
+      }
+      header > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+      header > div > div {
+        background-color: #d9d9d9;
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+      }
+      .editing {
+        background-color: white;
+        border: 2px solid #bbc0c9;
+        width: 314px;
+        height: 100px;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        position: absolute;
+        top: 13%;
+        left: 40%;
+        box-shadow: 8px 16px 24px 0px #00000040;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+      }
+      input[type="file"] {
+        display: none;
+      }
+      .custom-file-upload {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 6px 12px;
+        cursor: pointer;
+      }
+      #replaceWithText,
+      #delete {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: transparent;
+        border: none;
+        gap: 5px;
+        cursor: pointer;
+      }
+      #swatch {
+        background: white;
+        border: 2px solid #e1e1e1;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        gap: 15px;
+        font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+          sans-serif;
+      }
+      #swatch h1 {
+        margin: 0;
+        text-transform: uppercase;
+      }
+      #swatch h2 {
+        font-weight: normal;
+        margin: 0;
+      }
+      input[type="color"] {
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        background: none;
+        cursor: pointer;
+        padding: 0;
+        height: 40px;
+        width: 40px;
+        border: 0;
+      }
+      *:focus {
+        border-radius: 0;
+        outline: none;
+      }
+      ::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+      ::-webkit-color-swatch {
+        border: 0;
+        border-radius: 0;
+      }
+      ::-moz-color-swatch,
+      ::-moz-focus-inner {
+        border: 0;
+      }
+      ::-moz-focus-inner {
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="view">
+      <div class="twod">
+        <div><canvas id="2d"> </canvas></div>
+      </div>
+      <div class="svgsDiv"><div id="allSvg"></div></div>
+
+      <canvas class="threed" id="3d"> </canvas>
+      <div class="editing" id="editing">
+        <button id="replaceWithText">
+          <img
+            src="./public/stock-vector--logo-design-letter-tt-for-brand-and-company-names-1729855027 1.svg"
+            alt="text"
+          />
+          Text
+        </button>
+        <label for="upload" class="custom-file-upload">
+          <img src="./public/mage_image-upload.svg" alt="Image" /> Image</label
+        ><input
+          type="file"
+          id="upload"
+          accept=".jpg, .jpeg, .png, .svg"
+          class="fileUpload"
+        />
+        <button id="delete">
+          <img src="./public/uiw_delete.svg" alt="" /> Delete
+        </button>
+      </div>
+      <div class="colorsContainer">
+        <div class="colors">
+          <div id="swatch">
+            <input type="color" id="box" name="color" value="#FF0000" />
+
+            <div class="info">
+              <h2>Color</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./index.js"></script>
+  </body>
+</html>
